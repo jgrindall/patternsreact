@@ -65,25 +65,33 @@ const getPt = (segs, p)=>{
     const TOL = 20;
     const candidates = [];
     let dx, dy;
+    console.log(segs, p);
     for(let seg of segs){
         dx = Math.abs(seg[0].x  - p.x);
         dy = Math.abs(seg[0].y  - p.y);
         if(dx < TOL && dy < TOL){
-            candidates.push({pt:seg[0], dx:dx, dy:dy});
+            candidates.push({pt:seg[0], index:0, seg:seg, dx:dx, dy:dy});
         }
         dx = Math.abs(seg[1].x  - p.x);
         dy = Math.abs(seg[1].y  - p.y);
         if(dx < TOL && dy < TOL){
-            candidates.push({pt:seg[1], dx:dx, dy:dy});
+            candidates.push({pt:seg[1], index:1, seg:seg, dx:dx, dy:dy});
         }
     }
     if(candidates.length >= 1){
-        console.log('c', candidates);
         const sorted = _.sortBy(candidates, c=> c.dx + c.dy);
-        console.log('s', sorted);
-        return sorted[0].pt;
+        return {
+            matched:true,
+            segment:sorted[0].seg,
+            p:sorted[0].pt,
+            index:sorted[0].index
+        };;
     }
-    return p;
+    return {
+        matched:false,
+        segment:null,
+        p:p
+    };
 }
 
 const transformSegment = (segment, t)=>{

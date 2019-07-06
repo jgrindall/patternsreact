@@ -9,7 +9,7 @@ let realContainer;
 let drawingContainer;
 
 const _clean = segs=>{
-	
+
 	return segs;
 };
 
@@ -48,10 +48,10 @@ const netRenderer = {
        .moveTo(p0.x, p0.y)
        .lineTo(p1.x, p1.y);
    },
-	update:(segs, type)=>{
+	update:(segs, tool)=>{
 		segs = _clean(segs);
-		let container = (type === "cons" ? constructionContainer : realContainer);
-		let color = (type === "cons" ? "black" : "blue");
+		let container = (tool === "drawc" ? constructionContainer : realContainer);
+		let color = (tool === "drawc" ? "black" : "blue");
 		let n = container.children.length;
 		const tar = segs.length;
 		while(n < tar){

@@ -9,20 +9,22 @@ class Main extends Component {
   constructor(props){
     super(props);
     this.state = {
-        tool: 'draw'
+        tool: 'select'
     };
   }
-  onSelectTool(name){
-      console.log(arguments)
-      console.log(name)
-      this.setState({tool:name});
+  onSelectTool(tool){
+      this.setState({tool:tool});
   }
 
   render() {
       const tool = this.state.tool;
       return(
         <div className="App">
-          <MyComponent></MyComponent>
+
+          <MyComponent
+            tool={tool}>
+          </MyComponent>
+
           <Menu
              tool={tool}
              onSelectTool={name => this.onSelectTool(name)}>

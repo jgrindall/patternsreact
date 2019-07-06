@@ -16,26 +16,134 @@ const trans = GeomUtils.compose(
 
 const invTrans = GeomUtils.getInverse(trans);
 
+class DrawingTool{
+    constructor(comp){
+        this.comp = comp;
+        this.state = "idle";
+    }
+    addSegment(p){
+        this.segment = [{x:p.x, y:p.y}, {x:p.x, y:p.y}];
+        const segments = this.comp.state.rSegments.concat([this.segment]);
+        this.comp.setState({ rSegments:segments});
+    }
+    onMouseDown(e){
+        let data = this.comp.getMatchedData({x: e.pageX, y: e.pageY}, this.comp.state.allRSegments);
+        this.state = "drawing";
+        this.addSegment(data.p);
+    }
+    onMouseMove(e){
+        if(this.state === "drawing"){
+            const p = {x: e.pageX, y: e.pageY};
+            this.segment[1].x = p.x;
+            this.segment[1].y = p.y;
+            this.comp._drawLine(this.segment[0], this.segment[1]);
+            const segments = this.comp._getAllSegs(this.comp.state.rSegments);
+            this.comp.setState({allRSegments:segments});
+            this.comp._drawSegs(segments);
+        }
+    }
+    onMouseUp(e){
+        if(this.state === "drawing"){
+            this.comp._clearLine();
+            this.state = "idle";
+        }
+    }
+};
+
+/*
+
+mode:"idle",
+start:{
+    x:0,
+    y:0
+},
+end:{
+    x:0,
+    y:0
+},
+*/
+
+class ConsDrawingTool{
+    constructor(){
+
+    }
+    onMouseDown(e){}
+    onMouseMove(e){}
+    onMouseUp(e){}
+};
+
+class TransformingTool{
+    constructor(){
+
+    }
+    onMouseDown(e){}
+    onMouseMove(e){}
+    onMouseUp(e){}
+};
+
+class SelectingTool{
+    constructor(comp){
+            this.comp = comp;
+    }
+    onMouseDown(e){
+        let mData = this.comp.getMatchedData({x: e.pageX, y: e.pageY}, this.comp.state.allRSegments);
+        if(mData.matched){
+            const matchedSegment = mData.segment.baseSegment;
+            const index = mData.index;
+            this._point = matchedSegment[mData.index];
+        }
+    }
+    onMouseMove(e){
+        if(this._point){
+            this._point.x += 1;
+            let s = this.comp.state.rSegments;
+            const allS = this.comp._getAllSegs(s);
+            this.comp.setState({ rSegments:s, allRSegments:allS});
+            this.comp._drawSegs(allS);
+        }
+    }
+    onMouseUp(e){
+
+    }
+};
+
 class MyComponent extends Component {
 
   constructor(props){
     super(props);
     this.canvasRef = React.createRef();
     this.state = {
-        mode:"idle",
-        focus:"cons",
-        start:{
-            x:0,
-            y:0
-        },
-        end:{
-            x:0,
-            y:0
+        toolState:{
+
         },
         cSegments:[],
-        rSegments:[]
+        rSegments:[],
+        allCSegments:[],
+        allRSegments:[]
     };
   }
+
+  componentDidUpdate(prevProps, prevState) {
+      if(prevProps.tool !== this.props.tool){
+          this._updateTool();
+      }
+  }
+
+  _updateTool(){
+      if(this.props.tool === "draw"){
+          this._tool = new DrawingTool(this);
+      }
+      else if(this.props.tool === "drawc"){
+          this._tool = new ConsDrawingTool(this);
+      }
+      else if(this.props.tool === "select"){
+          this._tool = new SelectingTool(this);
+      }
+      else if(this.props.tool === "transform"){
+          this._tool = new TransformingTool(this);
+      }
+  }
+
   componentDidMount(){
     renderer.init(this.canvasRef.current);
   }
@@ -64,79 +172,59 @@ class MyComponent extends Component {
       });
       for(let i = 0; i < allT.length; i++){
           for(let j = 0; j < lineSegments.length; j++){
-              allSeg.push(GeomUtils.transformSegment(lineSegments[j], allT[i]))
+              const seg = GeomUtils.transformSegment(lineSegments[j], allT[i]);
+              seg.baseSegment = lineSegments[j];
+              allSeg.push(seg);
           }
       }
       return allSeg;
   }
 
-  _drawSegs(lineSegments = []){
-      const segs = this._getAllSegs(lineSegments);
-      renderer.update(segs, this.state.focus);
+  _drawSegs(segs = []){
+      console.log(segs);
+      //const segs = this._getAllSegs(lineSegments);
+      renderer.update(segs, this.props.tool);
   }
 
-  _findPoint(p){
-      const segs = (this.state.focus === "cons" ? this.state.cSegments : this.state.rSegments);
-      let tPoint = invTrans.apply(p);
-      tPoint = GeomUtils.getPt(segs, tPoint);
-      return trans.apply(tPoint);
+  getMatchedData(p, segs){
+      return GeomUtils.getPt(segs, p);
   }
 
   _onMouseDown(e){
-      let p = this._findPoint({x: e.pageX, y: e.pageY});
-      this.setState({ mode:"draw", start:p, end:p});
+      if(this._tool){
+          this._tool.onMouseDown(e);
+    }
   }
 
   _onMouseMove(e){
-      //console.log(this.state);
-      if(this.state.mode === "draw"){
-          const p = {x: e.pageX, y: e.pageY};
-          this.setState({ end: p});
-          this._drawLine(this.state.start, this.state.end);
-      }
+      if(this._tool){
+            this._tool.onMouseMove(e);
+        }
   }
 
   _onMouseUp(e){
-      const p = {x: e.pageX, y: e.pageY};
-      const seg = [this.state.start, p];
-      const tSeg = GeomUtils.transformSegment(seg, invTrans);
-      let newS;
-      if(this.state.focus === "cons"){
-          newS = this.state.cSegments.concat([tSeg]);
-          this.setState({ mode:"idle", cSegments:newS});
-      }
-      else{
-          newS = this.state.rSegments.concat([tSeg]);
-          this.setState({ mode:"idle", rSegments:newS});
-      }
-      this._clearLine();
-      this._drawSegs(newS);
+      if(this._tool){
+            this._tool.onMouseUp(e);
+    }
+
   }
-  selectCons(e){
-      e.stopPropagation();
-      this.setState({focus:"cons"});
-  }
-  selectReal(e){
-       e.stopPropagation();
-        this.setState({focus:"real"});
-  }
+
 
   render() {
-      const start = this.state.start;
-      const end = this.state.end;
-    return(
-        <div className='drawing'
-            onMouseDown={this._onMouseDown.bind(this)}
-            onMouseMove={this._onMouseMove.bind(this)}
-            onMouseUp={this._onMouseUp.bind(this)}>
 
-                <canvas ref={this.canvasRef} width='1024' height='600' ></canvas>
-                <h3>Mouse coordinates: { start.x.toFixed(1) } { start.y.toFixed(1) }   { end.x.toFixed(1) } { end.y.toFixed(1) }</h3>
-                <button className="cons" onClick={this.selectCons.bind(this)}>cons</button>
-                <button className="real" onClick={this.selectReal.bind(this)}>real</button>
-      </div>
-    )
-  }
+      return(
+            <div className='drawing'
+                onMouseDown={this._onMouseDown.bind(this)}
+                onMouseMove={this._onMouseMove.bind(this)}
+                onMouseUp={this._onMouseUp.bind(this)}>
+
+                    <canvas ref={this.canvasRef} width='1024' height='600' ></canvas>
+
+            </div>
+        )
+    }
+
 }
+
 
 export default MyComponent;
