@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-//import Drawer from "./canvas/main";
 import GeomUtils from './canvas/geom_utils';
 import Utils from './canvas/utils';
 import groupP3M1 from './canvas/group_p3m1';

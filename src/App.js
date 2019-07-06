@@ -1,21 +1,10 @@
 import React from 'react';
 import './App.css';
-import MyComponent from './MyComponent';
-import Menu from './Menu';
-import { Button, ButtonGroup } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-
+import Main from './Main';
 
 function App() {
   return (
-    <div className="App">
-
-      <MyComponent></MyComponent>
-      <Menu></Menu>
-
-
-    </div>
+    <Main></Main>
 
   );
 }
