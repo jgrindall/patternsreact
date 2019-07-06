@@ -1,4 +1,4 @@
-import GeomUtils from './geom_utils';
+
 import * as PIXI from 'pixi.js';
 
 const PT = function(x, y){

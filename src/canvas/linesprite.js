@@ -1,36 +1,34 @@
 import * as PIXI from 'pixi.js';
 
+const PI2 = Math.PI/2;
 const maxWidth = 10;
-let tcanvas = document.createElement("canvas");
-tcanvas.width = maxWidth + 2;
-tcanvas.height = 1;
-let baseTexture = new PIXI.BaseTexture(tcanvas);
-var context = tcanvas.getContext("2d");
-context.fillStyle = "rgb(200,200,230)";
+let canvas = document.createElement("canvas");
+canvas.width = maxWidth + 2;
+canvas.height = 1;
+var context = canvas.getContext("2d");
+context.fillStyle = "rgba(200,200,230, 0.075)";
 context.fillRect(1, 0, 1, 1);
-var texture = new PIXI.Texture(baseTexture, PIXI.SCALE_MODES.LINEAR);
+const texture = new PIXI.Texture(new PIXI.BaseTexture(canvas), PIXI.SCALE_MODES.LINEAR);
 texture.frame = new PIXI.Rectangle(0, 0, 3, 1);
-let cacheVal = texture;
 
 function LineSprite() {
-    PIXI.Sprite.call(this, cacheVal);
-    this.x1 = 0;
-    this.y1 = 0;
-    this.x2 = 0;
-    this.y2 = 0;
-    this.updatePosition();
+    PIXI.Sprite.call(this, texture);
     this.anchor.x = 0.5;
 };
 
 LineSprite.prototype = Object.create(PIXI.Sprite.prototype);
 LineSprite.prototype.constructor = LineSprite;
 
-LineSprite.prototype.updatePosition = function () {
-    this.position.x = this.x1;
-    this.position.y = this.y1;
-    this.height = Math.sqrt((this.x2 - this.x1) * (this.x2 - this.x1) + (this.y2 - this.y1) * (this.y2 - this.y1));
-    var dir = Math.atan2(this.y1 - this.y2, this.x1 - this.x2);
-    this.rotation = Math.PI * 0.5 + dir;
+LineSprite.prototype.updatePosition = function (seg) {
+    const x1 = seg[0].x;
+    const y1 = seg[0].y;
+    const x2 = seg[1].x;
+    const y2 = seg[1].y;
+    this.position.x = x1;
+    this.position.y = y1;
+    this.height = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    var dir = Math.atan2(y1 - y2, x1 - x2);
+    this.rotation = PI2 + dir;
 };
 
 export default LineSprite;

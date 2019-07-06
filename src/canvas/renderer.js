@@ -2,25 +2,24 @@ import * as PIXI from 'pixi.js';
 import LineSprite from './linesprite';
 
 let pixi;
-let gfx;
+let drawingGfx;
 let stage;
-
-const count = 1000;
-let container;
+let constructionContainer;
+let drawingContainer;
 
 const netRenderer = {
 	init:(c)=>{
-		console.log('init!!!!')
+		console.log("init", c);
 		pixi = PIXI.autoDetectRenderer(1024, 600, {view:c, antialias: false, forceFXAA: false});
-		//document.body.appendChild(pixi.view);
 	    stage = new PIXI.Container();
-	    container = new PIXI.Container();
-	    gfx = new PIXI.Graphics();
-		stage.addChild(container);
-		stage.addChild(gfx);
-		for (let i = 0; i < count; i++) {
-        	container.addChild(new LineSprite());
-    	}
+	    constructionContainer = new PIXI.Container();
+		drawingContainer = new PIXI.Container();
+	    drawingGfx = new PIXI.Graphics();
+		drawingGfx.x = 0;
+		drawingGfx.y = 0;
+		stage.addChild(constructionContainer);
+		stage.addChild(drawingContainer);
+		drawingContainer.addChild(drawingGfx);
 		var render = ()=>{
 			pixi.render(stage);
 			requestAnimationFrame(render);
@@ -28,31 +27,33 @@ const netRenderer = {
 		requestAnimationFrame(render);
 	},
 	draw:(seg, sprite)=>{
-		sprite.x1 = seg[0].x;
-        sprite.y1 = seg[0].y;
-        sprite.x2 = seg[1].x;
-        sprite.y2 = seg[1].y;
-        sprite.updatePosition();
+        sprite.updatePosition(seg);
 	},
 	reset:()=>{
 
 	},
+	clearLine:()=>{
+		drawingGfx.clear();
+	},
+	drawLine:(p0, p1)=>{
+		drawingGfx.clear().lineStyle(2, 0xff0000)
+       .moveTo(p0.x, p0.y)
+       .lineTo(p1.x, p1.y);
+   },
 	update:(segs)=>{
-		let n = container.children.length;
+		console.log(3, segs.length)
+		let n = constructionContainer.children.length;
 		const tar = segs.length;
-		if(n < tar){
-			// add more
-			while(n < tar){
-				container.addChild(new LineSprite());
-				n++;
-			}
+		while(n < tar){
+			constructionContainer.addChild(new LineSprite());
+			n++;
 		}
-		n = container.children.length;
+		n = constructionContainer.children.length;
 		for(var i = 0; i < n; i++){
 			if(i < tar){
-				netRenderer.draw(segs[i], container.children[i]);
+				netRenderer.draw(segs[i], constructionContainer.children[i]);
 			}
-			container.children[i].visible = (i < tar);
+			constructionContainer.children[i].visible = (i < tar);
 		}
 	}
 }
