@@ -2,16 +2,26 @@ import * as PIXI from 'pixi.js';
 
 const PI2 = Math.PI/2;
 const maxWidth = 10;
-let canvas = document.createElement("canvas");
-canvas.width = maxWidth + 2;
-canvas.height = 1;
-var context = canvas.getContext("2d");
-context.fillStyle = "rgba(200,200,230, 0.075)";
-context.fillRect(1, 0, 1, 1);
-const texture = new PIXI.Texture(new PIXI.BaseTexture(canvas), PIXI.SCALE_MODES.LINEAR);
-texture.frame = new PIXI.Rectangle(0, 0, 3, 1);
 
-function LineSprite() {
+
+const getTexture = (clr)=>{
+    let canvas = document.createElement("canvas");
+    canvas.width = maxWidth + 2;
+    canvas.height = 1;
+    var context = canvas.getContext("2d");
+    context.fillStyle = clr;
+    context.fillRect(1, 0, 1, 1);
+    const texture = new PIXI.Texture(new PIXI.BaseTexture(canvas), PIXI.SCALE_MODES.LINEAR);
+    texture.frame = new PIXI.Rectangle(0, 0, 3, 1);
+    return texture;
+};
+
+const blackTexture = getTexture("rgba(20,20,20, 0.7)");
+const blueTexture = getTexture("rgba(20,20,220, 0.7)");
+
+
+function LineSprite(color) {
+    let texture = color === "black" ? blackTexture : blueTexture;
     PIXI.Sprite.call(this, texture);
     this.anchor.x = 0.5;
 };

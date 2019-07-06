@@ -5,19 +5,28 @@ let pixi;
 let drawingGfx;
 let stage;
 let constructionContainer;
+let realContainer;
 let drawingContainer;
 
 const netRenderer = {
-	init:(c)=>{
-		console.log("init", c);
-		pixi = PIXI.autoDetectRenderer(1024, 600, {view:c, antialias: false, forceFXAA: false});
+	init:(canvas)=>{
+		pixi = PIXI.autoDetectRenderer(canvas.width, canvas.height,
+			{
+				view:canvas,
+				backgroundColor: 0xffffff,
+				antialias: false,
+				forceFXAA: false
+			}
+		);
 	    stage = new PIXI.Container();
 	    constructionContainer = new PIXI.Container();
+		realContainer = new PIXI.Container();
 		drawingContainer = new PIXI.Container();
 	    drawingGfx = new PIXI.Graphics();
 		drawingGfx.x = 0;
 		drawingGfx.y = 0;
 		stage.addChild(constructionContainer);
+		stage.addChild(realContainer);
 		stage.addChild(drawingContainer);
 		drawingContainer.addChild(drawingGfx);
 		var render = ()=>{
@@ -25,12 +34,6 @@ const netRenderer = {
 			requestAnimationFrame(render);
 		};
 		requestAnimationFrame(render);
-	},
-	draw:(seg, sprite)=>{
-        sprite.updatePosition(seg);
-	},
-	reset:()=>{
-
 	},
 	clearLine:()=>{
 		drawingGfx.clear();
@@ -40,20 +43,21 @@ const netRenderer = {
        .moveTo(p0.x, p0.y)
        .lineTo(p1.x, p1.y);
    },
-	update:(segs)=>{
-		console.log(3, segs.length)
-		let n = constructionContainer.children.length;
+	update:(segs, type)=>{
+		let container = (type === "cons" ? constructionContainer : realContainer);
+		let color = (type === "cons" ? "black" : "blue");
+		let n = container.children.length;
 		const tar = segs.length;
 		while(n < tar){
-			constructionContainer.addChild(new LineSprite());
+			container.addChild(new LineSprite(color));
 			n++;
 		}
-		n = constructionContainer.children.length;
+		n = container.children.length;
 		for(var i = 0; i < n; i++){
 			if(i < tar){
-				netRenderer.draw(segs[i], constructionContainer.children[i]);
+				container.children[i].updatePosition(segs[i]);
 			}
-			constructionContainer.children[i].visible = (i < tar);
+			container.children[i].visible = (i < tar);
 		}
 	}
 }

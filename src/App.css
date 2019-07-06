@@ -41,3 +41,17 @@
     width:1024px;
     height:600px;
 }
+
+.drawing button{
+    position: absolute;
+    top:0;
+}
+
+.drawing button.cons{
+    right:0;
+}
+
+
+.drawing button.real{
+    right:100px;
+}
