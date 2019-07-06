@@ -8,12 +8,17 @@ let constructionContainer;
 let realContainer;
 let drawingContainer;
 
+const _clean = segs=>{
+	
+	return segs;
+};
+
 const netRenderer = {
 	init:(canvas)=>{
 		pixi = PIXI.autoDetectRenderer(canvas.width, canvas.height,
 			{
 				view:canvas,
-				backgroundColor: 0xffffff,
+				backgroundColor: 0xdddddd,
 				antialias: false,
 				forceFXAA: false
 			}
@@ -44,6 +49,7 @@ const netRenderer = {
        .lineTo(p1.x, p1.y);
    },
 	update:(segs, type)=>{
+		segs = _clean(segs);
 		let container = (type === "cons" ? constructionContainer : realContainer);
 		let color = (type === "cons" ? "black" : "blue");
 		let n = container.children.length;

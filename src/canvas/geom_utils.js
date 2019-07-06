@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import _ from 'lodash';
 
 const _compose = (a, b)=>{
     // a then b
@@ -60,6 +61,31 @@ const getIdentity = ()=>{
     return new PIXI.Matrix();
 };
 
+const getPt = (segs, p)=>{
+    const TOL = 20;
+    const candidates = [];
+    let dx, dy;
+    for(let seg of segs){
+        dx = Math.abs(seg[0].x  - p.x);
+        dy = Math.abs(seg[0].y  - p.y);
+        if(dx < TOL && dy < TOL){
+            candidates.push({pt:seg[0], dx:dx, dy:dy});
+        }
+        dx = Math.abs(seg[1].x  - p.x);
+        dy = Math.abs(seg[1].y  - p.y);
+        if(dx < TOL && dy < TOL){
+            candidates.push({pt:seg[1], dx:dx, dy:dy});
+        }
+    }
+    if(candidates.length >= 1){
+        console.log('c', candidates);
+        const sorted = _.sortBy(candidates, c=> c.dx + c.dy);
+        console.log('s', sorted);
+        return sorted[0].pt;
+    }
+    return p;
+}
+
 const transformSegment = (segment, t)=>{
     return [
         t.apply(segment[0]),
@@ -77,7 +103,8 @@ const GeomUtils = {
     getReflection:getReflection,
     getMatrix:getMatrix,
     getIdentity:getIdentity,
-    transformSegment:transformSegment
+    transformSegment:transformSegment,
+    getPt:getPt
 };
 
 export default GeomUtils;

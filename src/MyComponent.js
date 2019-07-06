@@ -11,7 +11,7 @@ const gp = groupP3M1;
 
 const trans = GeomUtils.compose(
     GeomUtils.getTranslation(150, 50),
-    GeomUtils.getScale(1.3),
+    GeomUtils.getScale(2.3),
     GeomUtils.getRotationAboutOrigin(0.3)
 );
 
@@ -76,17 +76,23 @@ class MyComponent extends Component {
       renderer.update(segs, this.state.focus);
   }
 
+  _findPoint(p){
+      const segs = (this.state.focus === "cons" ? this.state.cSegments : this.state.rSegments);
+      let tPoint = invTrans.apply(p);
+      tPoint = GeomUtils.getPt(segs, tPoint);
+      return trans.apply(tPoint);
+  }
+
   _onMouseDown(e){
-      const p = {x: e.pageX, y: e.pageY};
+      let p = this._findPoint({x: e.pageX, y: e.pageY});
       this.setState({ mode:"draw", start:p, end:p});
   }
 
   _onMouseMove(e){
-
       //console.log(this.state);
       if(this.state.mode === "draw"){
           const p = {x: e.pageX, y: e.pageY};
-          this.setState({ end:p});
+          this.setState({ end: p});
           this._drawLine(this.state.start, this.state.end);
       }
   }
@@ -126,7 +132,7 @@ class MyComponent extends Component {
             onMouseUp={this._onMouseUp.bind(this)}>
 
                 <canvas ref={this.canvasRef} width='1024' height='600' ></canvas>
-                <h1>Mouse coordinates: { start.x } { start.y }   { end.x } { end.y }</h1>
+                <h3>Mouse coordinates: { start.x.toFixed(1) } { start.y.toFixed(1) }   { end.x.toFixed(1) } { end.y.toFixed(1) }</h3>
                 <button className="cons" onClick={this.selectCons.bind(this)}>cons</button>
                 <button className="real" onClick={this.selectReal.bind(this)}>real</button>
       </div>
