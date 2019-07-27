@@ -32,6 +32,9 @@ class Rect{
 
         return new Rect(newPPoint, Utils.pToQ(newPPoint, newVPoint), Utils.pToQ(newPPoint, newWPoint))
     }
+    getPointForMult(l, m){
+        return Utils.add(this.p, Utils.times(this.v, l), Utils.times(this.w, m));
+    }
     getAll(){
         return [
             this.get('p'),
@@ -69,6 +72,49 @@ class Rect{
             }
         }
         return transforms;
+    }
+    getMappedSeg(seg){
+        const p0 = seg[0];
+        const p1 = seg[1];
+        const p0Top1 = Utils.pToQ(p0, p1);
+        const p1Top0 = Utils.pToQ(p1, p0);
+        const data0 = this._getMappingData(p0);
+        const data1 = this._getMappingData(p1);
+        if(data0.lambda === data1.lambda && data0.mu === data1.mu){
+            return [
+                [
+                    data0.p,
+                    data1.p
+                ]
+            ];
+        }
+        else{
+            return [
+                //use data0
+                [
+                    data0.p,
+                    Utils.add(data0.p, p0Top1)
+                ],
+                //use data1
+                [
+                    Utils.add(data1.p, p1Top0),
+                    data1.p
+                ]
+            ];
+        }
+    }
+    getMappingData(p){
+        //map the point P into our rect
+        const mult = this.getMultipliers(p);
+        let rLambda = Math.floor(mult.lambda);
+        let rMu = Math.floor(mult.mu);
+        let lambda = mult.lambda - rLambda;
+        let mu = mult.mu - rMu;
+        return {
+            p:this.getPointForMult(lambda, mu),
+            lambda:rLambda,
+            mu:rMu
+        };
     }
     getSpanXYForRect(r){
         const pts = r.getAll().map(this.getMultipliers.bind(this));

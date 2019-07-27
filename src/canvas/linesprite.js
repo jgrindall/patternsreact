@@ -3,7 +3,6 @@ import * as PIXI from 'pixi.js';
 const PI2 = Math.PI/2;
 const maxWidth = 10;
 
-
 const getTexture = (clr)=>{
     let canvas = document.createElement("canvas");
     canvas.width = maxWidth + 2;
@@ -30,10 +29,10 @@ LineSprite.prototype = Object.create(PIXI.Sprite.prototype);
 LineSprite.prototype.constructor = LineSprite;
 
 LineSprite.prototype.updatePosition = function (seg) {
-    const x1 = seg[0].x;
-    const y1 = seg[0].y;
-    const x2 = seg[1].x;
-    const y2 = seg[1].y;
+    const x1 = seg.start.x;
+    const y1 = seg.start.y;
+    const x2 = seg.end.x;
+    const y2 = seg.end.y;
     this.position.x = x1;
     this.position.y = y1;
     this.height = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));

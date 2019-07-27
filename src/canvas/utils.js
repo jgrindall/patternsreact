@@ -40,11 +40,11 @@ const _add = (p, q)=>{
 };
 
 const pMinusQ = (p, q)=>{
-    PT(p.x - q.x, p.y - q.y);
+    return PT(p.x - q.x, p.y - q.y);
 };
 
 const pToQ = (p, q)=>{
-    return PT(q.x - p.x, q.y - p.y);
+    return pMinusQ(q, p);
 };
 
 const perp = v=>{
@@ -65,7 +65,17 @@ const getMultipliersForBasis = (p, v, w)=>{
 const cross = (p, q)=>{
     // multiple of 'k'
     return p.x*q.y - p.y*q.x;
-}
+};
+
+const closeTo = (p, q, TOL = 20)=>{
+    const d = getDistSqr(p, q);
+    return (d < TOL);
+};
+
+const getDistSqr = (p, q)=>{
+    const diff = pMinusQ(p, q);
+    return dot(diff, diff);
+};
 
 const vectorsIntersect = (p, v, q, w)=>{
     const mu = cross(pMinusQ(p, q), v) / cross(w, v);
@@ -79,7 +89,10 @@ const Utils = {
     times:times,
     dot:dot,
     pToQ:pToQ,
+    pMinusQ:pMinusQ,
     perp:perp,
+    closeTo:closeTo,
+    getDistSqr:getDistSqr,
     modSqr:modSqr,
     getMultipliersForBasis:getMultipliersForBasis,
     cross:cross,

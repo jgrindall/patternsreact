@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
 import _ from 'lodash';
+import Segment from '../Segment';
+import Utils from './utils';
 
 const _compose = (a, b)=>{
     // a then b
@@ -18,6 +20,10 @@ const compose = (...args)=>{
     const firsts = compose.call(ctx, ...args);
     return _compose(firsts, last);
 };
+
+const composeAllWith = (a, followedBy) => a.map(t=>{
+    return compose(t, followedBy);
+});
 
 const getTranslation = function(x, y){
     if(arguments.length === 1 && typeof arguments[0] === "object"){
@@ -61,48 +67,40 @@ const getIdentity = ()=>{
     return new PIXI.Matrix();
 };
 
-const getPt = (segs, p)=>{
-    const TOL = 20;
-    const candidates = [];
-    let dx, dy;
-    console.log(segs, p);
-    for(let seg of segs){
-        dx = Math.abs(seg[0].x  - p.x);
-        dy = Math.abs(seg[0].y  - p.y);
-        if(dx < TOL && dy < TOL){
-            candidates.push({pt:seg[0], index:0, seg:seg, dx:dx, dy:dy});
-        }
-        dx = Math.abs(seg[1].x  - p.x);
-        dy = Math.abs(seg[1].y  - p.y);
-        if(dx < TOL && dy < TOL){
-            candidates.push({pt:seg[1], index:1, seg:seg, dx:dx, dy:dy});
-        }
-    }
-    if(candidates.length >= 1){
-        const sorted = _.sortBy(candidates, c=> c.dx + c.dy);
-        return {
-            matched:true,
-            segment:sorted[0].seg,
-            p:sorted[0].pt,
-            index:sorted[0].index
-        };;
-    }
-    return {
-        matched:false,
-        segment:null,
-        p:p
-    };
-}
-
 const transformSegment = (segment, t)=>{
-    return [
-        t.apply(segment[0]),
-        t.apply(segment[1])
-    ]
+    const p0 = t.apply(segment.start);
+    const p1 = t.apply(Utils.add(segment.start, segment.diff));
+    return new Segment(p0, Utils.pMinusQ(p1, p0));
+};
+
+const transformPoly = (poly, t)=>{
+    let ptsFlat = poly.points;
+    let pts = []
+    for (let i = 0; i < ptsFlat.length; i+=2){
+        pts.push(Utils.PT(ptsFlat[i], ptsFlat[i + 1]));
+    }
+    const transPoints = pts.map(p=>t.apply(p));
+    return new PIXI.Polygon(transPoints);
+};
+
+const getDet = t=>{
+    return t.a*t.d - t.b*t.c;
+};
+
+const composeArrays = (arr1, arr2)=>{
+    const all = [];
+    arr1.forEach(t1=>{
+        arr2.forEach(t2=>{
+            all.push(GeomUtils.compose(t1, t2));
+        });
+    });
+    return all;
 };
 
 const GeomUtils = {
     compose:compose,
+    composeAllWith:composeAllWith,
+    composeArrays:composeArrays,
     getTranslation:getTranslation,
     getScale: getScale,
     getRotationAboutOrigin:getRotationAboutOrigin,
@@ -112,7 +110,8 @@ const GeomUtils = {
     getMatrix:getMatrix,
     getIdentity:getIdentity,
     transformSegment:transformSegment,
-    getPt:getPt
+    transformPoly:transformPoly,
+    getDet:getDet
 };
 
 export default GeomUtils;

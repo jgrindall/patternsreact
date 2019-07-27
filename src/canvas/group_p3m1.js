@@ -1,6 +1,7 @@
 import GeomUtils from './geom_utils';
 import Utils from './utils';
 import Rect from './rect';
+import * as PIXI from 'pixi.js';
 
 const rt3 = Math.sqrt(3);
 const sideLen = 100;
@@ -22,6 +23,22 @@ const id = GeomUtils.getIdentity();
 const groupP3M1 = {
     name:"p3m1",
     baseRect: new Rect(Utils.PT(0, 0), Utils.PT(sideLen*rt3, 0), Utils.PT(0, 3*sideLen)),
+    fundamentalPolygon:new PIXI.Polygon([
+        Utils.PT(0, 0),
+        p,
+        Utils.PT(0, 100)
+    ]),
+    getBaseTransform:function(p){
+        if(p.x < 0 || p.y < 0 || p.x > sideLen*rt3 || p.y > 300){
+            throw new Error("outside");
+        }
+        for(let i = 0; i < this.transformedPolys.length; i++){
+            if(this.transformedPolys[i].contains(p.x, p.y)){
+                return this.baseTransforms[i];
+            }
+        }
+        throw new Error("not found");
+    },
     baseTransforms:[
         id,
         t0,
@@ -40,5 +57,9 @@ const groupP3M1 = {
     ]
 
 }
+
+groupP3M1.transformedPolys = groupP3M1.baseTransforms.map(t=>{
+    return GeomUtils.transformPoly(groupP3M1.fundamentalPolygon, t);
+});
 
 export default groupP3M1;
