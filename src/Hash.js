@@ -1,5 +1,7 @@
 
 import {QuadTree, Box, Point, Circle} from 'js-quadtree';
+import _ from "lodash";
+import Utils from "./canvas/utils";
 
 class Hash{
     constructor(){
@@ -15,9 +17,16 @@ class Hash{
         segments.forEach(this.add.bind(this));
         return this;
     }
-    getClose(p){
-        const results = this.quadtree.query(new Circle(p.x, p.y, 20));
-        console.log('res', results);
+    getClose(p, index){
+        let results = this.quadtree.query(new Circle(p.x, p.y, 20));
+        results = _.reject(results, result=>{
+            return Utils.closeTo(result, p, 0.0001);
+        });
+        const sameSegment = results.filter(result => {
+            console.log(result);
+        });
+
+        console.log('res', p, results, index);
         return null;
         /*
         const results = quadtree.query(new Circle(150, 150, 100));

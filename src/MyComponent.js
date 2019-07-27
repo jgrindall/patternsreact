@@ -11,9 +11,9 @@ import CDrawTool from "./CDrawTool";
 const gp = groupP3M1;
 
 const trans = GeomUtils.compose(
-    GeomUtils.getTranslation(50, 0),
-    GeomUtils.getScale(4),
-    GeomUtils.getRotationAboutOrigin(0.24)
+    GeomUtils.getTranslation(0, 0),
+    GeomUtils.getScale(1.01),
+    GeomUtils.getRotationAboutOrigin(0)
 );
 
 class MyComponent extends Component {

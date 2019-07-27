@@ -27,7 +27,7 @@ class Main extends Component {
           <Menu
              tool={tool}
              onSelectTool={name => this.onSelectTool(name)}>
-         </Menu>
+          </Menu>
 
         </div>
     )

@@ -13,14 +13,14 @@ class SegmentData extends EventEmitter{
         this.allSegments = [];
         this.hash = new Hash();
         this.bounds = new Rect(
-            Utils.PT(),
-            Utils.PT(1024, 0),
-            Utils.PT(0, 600)
+            Utils.PT(-1,-1),
+            Utils.PT(1026, 0),
+            Utils.PT(0, 602)
         );
         this.updateTransform(transform);
     }
-    getClose(p){
-        return this.hash.getClose(p);
+    getClose(p, i){
+        return this.hash.getClose(p, i);
     }
     generateAllSegments(){
         this.allSegments = [];
@@ -29,30 +29,12 @@ class SegmentData extends EventEmitter{
             this.baseSegments.forEach(segment=>{
                 const transformedSegment = GeomUtils.transformSegment(segment, t);
                 transformedSegment.setBaseSegment(segment);
+                transformedSegment._i = t._i;
+                transformedSegment._j = t._j;
                 //transformedSegment.setIsBaseSegment(isIdentity);
                 this.allSegments.push(transformedSegment);
             });
         });
-        const c = (p, q)=>{
-            const dx = Math.abs(p.x - q.x);
-            const dy = Math.abs(p.y - q.y);
-            return dx < 0.01 && dy < 0.01;
-        };
-        console.log("#", this.baseSegments.length, this.allSegments.length);
-        for(let i = 0; i < this.allSegments.length - 1; i++){
-            for(let j = i + 1; j < this.allSegments.length; j++){
-                const p0 = this.allSegments[i].start;
-                const p1 = this.allSegments[i].end;
-                const q0 = this.allSegments[j].start;
-                const q1 = this.allSegments[j].end;
-                if(c(p0, q0) && c(p1, q1)){
-                    throw new Error("found1", p0, q0, p1, q1);
-                }
-                else if(c(p0, q1) && c(p1, q0)){
-                    throw new Error("found2", p0, q0, p1, q1);
-                }
-            }
-        }
     }
     generate(){
         this.generateAllSegments();
@@ -105,10 +87,12 @@ class SegmentData extends EventEmitter{
         this.baseSegments[i] = this._normalizeToBaseRect(start, diff);
         this.generate();
         this.emit("draw", this);
+        //return this.baseSegments[i];
     }
     add(start, diff){
         const segment = this._normalizeToBaseRect(start, diff);
         this.baseSegments.push(segment);
+        //return segment;
     }
 }
 

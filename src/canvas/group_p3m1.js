@@ -4,7 +4,7 @@ import Rect from './rect';
 import * as PIXI from 'pixi.js';
 
 const rt3 = Math.sqrt(3);
-const sideLen = 100;
+const sideLen = 120;
 const dy = Utils.PT(0, sideLen);
 
 const p = Utils.PT(sideLen*rt3/2, sideLen/2);
@@ -26,7 +26,7 @@ const groupP3M1 = {
     fundamentalPolygon:new PIXI.Polygon([
         Utils.PT(0, 0),
         p,
-        Utils.PT(0, 100)
+        Utils.PT(0, sideLen)
     ]),
     getBaseTransform:function(p){
         if(p.x < 0 || p.y < 0 || p.x > sideLen*rt3 || p.y > 300){

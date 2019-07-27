@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Segment from '../Segment';
 import Utils from './utils';
+import _ from "lodash";
 
 const _compose = (a, b)=>{
     // a then b
@@ -90,14 +91,23 @@ const getDet = t=>{
     return t.a*t.d - t.b*t.c;
 };
 
+const getKey = m=>{
+    let entries = [m.a, m.b, m.c, m.d, m.tx, m.ty];
+    entries = entries.map(e=>e.toFixed(2));
+    return entries.join(",");
+};
+
 const composeArrays = (arr1, arr2)=>{
-    const all = [];
-    arr1.forEach(t1=>{
-        arr2.forEach(t2=>{
-            all.push(GeomUtils.compose(t1, t2));
+    let all = [];
+    arr1.forEach((t1, i)=>{
+        arr2.forEach((t2, j)=>{
+            const m = GeomUtils.compose(t1, t2);
+            m._i = i;
+            m._j = j;
+            all.push(m);
         });
     });
-    return all;
+    return _.uniqBy(all, getKey);
 };
 
 const GeomUtils = {
