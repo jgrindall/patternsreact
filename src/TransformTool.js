@@ -1,9 +1,6 @@
 
 import Utils from './canvas/utils';
 import GeomUtils from './canvas/geom_utils';
-import renderer from './canvas/renderer';
-import _ from "lodash";
-
 
 class TransformTool{
     constructor(comp){

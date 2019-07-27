@@ -58,6 +58,7 @@ const netRenderer = {
    },
 	update:(segs, hash, tool)=>{
 		segs = _clean(segs);
+		let i;
 		let container = constructionContainer;
 		let color = (tool === "drawc" ? "black" : "blue");
 		color = color || "red";
@@ -68,7 +69,7 @@ const netRenderer = {
 			num++;
 		}
 		num = container.children.length;
-		for(var i = 0; i < num; i++){
+		for(i = 0; i < num; i++){
 			if(i < targetNum){
 				container.children[i].updatePosition(segs[i]);
 			}
@@ -82,7 +83,7 @@ const netRenderer = {
 			num++;
 		}
 		num = container.children.length;
-		for(var i = 0; i < num; i++){
+		for(i = 0; i < num; i++){
 			if(i < targetNum){
 				container.children[i].updatePosition(hash.pointHash[i].location);
 				container.children[i].updateScale(hash.pointHash[i].type === "start");

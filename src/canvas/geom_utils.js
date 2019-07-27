@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import _ from 'lodash';
 import Segment from '../Segment';
 import Utils from './utils';
 

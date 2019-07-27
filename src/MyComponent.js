@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import GeomUtils from './canvas/geom_utils';
-import Utils from './canvas/utils';
 import groupP3M1 from './canvas/group_p3m1';
-import Rect from './canvas/rect';
 import renderer from './canvas/renderer';
-import _ from "lodash";
 import SegmentData from "./SegmentData";
 import DrawTool from "./DrawTool";
 import TransformTool from "./TransformTool";

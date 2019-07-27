@@ -1,7 +1,5 @@
 
 import Utils from './canvas/utils';
-import _ from "lodash";
-
 
 class CDrawTool{
     constructor(comp){

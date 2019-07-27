@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faArrowsAlt, faPencilAlt, faMousePointer } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsAlt, faPencilAlt, faMousePointer } from '@fortawesome/free-solid-svg-icons'
 import _ from "lodash"
 
 class MyComponent1 extends Component {
 
-  constructor(props){
-    super(props);
-  }
   componentWillMount(){
     //console.log('First this called');
   }

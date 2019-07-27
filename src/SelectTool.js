@@ -1,8 +1,5 @@
 
-import GeomUtils from './canvas/geom_utils';
 import Utils from './canvas/utils';
-import _ from "lodash";
-
 
 class SelectTool{
     constructor(comp){

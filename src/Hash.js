@@ -1,8 +1,4 @@
-import GeomUtils from "./canvas/geom_utils";
-import Segment from "./Segment";
-import Utils from "./canvas/utils";
-import Rect from "./canvas/rect";
-import _ from "lodash";
+
 import {QuadTree, Box, Point, Circle} from 'js-quadtree';
 
 class Hash{
