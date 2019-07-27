@@ -12,6 +12,14 @@ class Segment{
     getBaseSegment(){
         return this.base;
     }
+    /*
+    setIsBaseSegment(isBase){
+        this.isBase = isBase;
+    }
+    getIsBaseSegment(){
+        return this.isBase;
+    }
+    */
 }
 
 export default Segment;

@@ -21,6 +21,9 @@ class DrawTool{
     _edit(p1){
         this.comp.list.edit(this.index, this.p0, Utils.pToQ(this.p0, p1));
     }
+    _remove(){
+        this.comp.list.remove(this.index);
+    }
     onMouseMove(e){
         if(this.state === "drawing"){
             this._edit(Utils.PT(e.pageX, e.pageY));
@@ -34,7 +37,12 @@ class DrawTool{
             if(close){
                 p1 = close.location;
             }
-            this._edit(p1);
+            if(Utils.getDistSqr(this.p0, p1) >= 1){
+                this._edit(p1);
+            }
+            else{
+                this._remove();
+            }
         }
     }
 };

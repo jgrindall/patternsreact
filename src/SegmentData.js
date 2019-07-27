@@ -21,41 +21,42 @@ class SegmentData extends EventEmitter{
         this.updateTransform(transform);
     }
     getClose(p){
-        console.log(this.hash);
-        return null;
-        /*
-        let close = [];
-        for(let i = 0; i < this.pointHash.length; i++){
-            const entry = this.pointHash[i];
-            const eq = (entry.location.x === p.x && entry.location.y === p.y);
-            const d = Utils.getDistSqr(entry.location, p);
-            if(!eq && d > 0.0000001 && d < 50){
-                close.push({entry:entry, d:d});
-            }
-        }
-        if(close.length >= 1){
-            close = _.sortBy(close, obj=>obj.d);
-            return close[0].entry;
-        }
-        return null;
-        */
+        return this.hash.getClose(p);
     }
     generateAllSegments(){
         this.allSegments = [];
         this.allTransforms.forEach(t=>{
+            //const isIdentity = GeomUtils.isIdentity(t);
             this.baseSegments.forEach(segment=>{
                 const transformedSegment = GeomUtils.transformSegment(segment, t);
-                transformedSegment.base = segment;
+                transformedSegment.setBaseSegment(segment);
+                //transformedSegment.setIsBaseSegment(isIdentity);
                 this.allSegments.push(transformedSegment);
             });
         });
-    }
-    generateHash(){
-        this.hash.empty().addAll(this.allSegments);
+        const c = (p, q)=>{
+            const dx = Math.abs(p.x - q.x);
+            const dy = Math.abs(p.y - q.y);
+            return dx < 0.01 && dy < 0.01;
+        };
+        for(let i = 0; i < this.allSegments.length - 1; i++){
+            for(let j = i + 1; j < this.allSegments.length; j++){
+                const p0 = this.allSegments[i].start;
+                const q0 = this.allSegments[j].start;
+                const p1 = this.allSegments[i].end;
+                const q1 = this.allSegments[j].end;
+                if(c(p0, p1) && c(q0, q1)){
+                    console.log("found", p0, q0, p1, q1);
+                }
+                else if(c(p0, q1) && c(q0, p1)){
+                    console.log("found", p0, q0, p1, q1);
+                }
+            }
+        }
     }
     generate(){
         this.generateAllSegments();
-        this.hash.empty().addAll(this.allSegments);
+        this.hash.generate(this.allSegments);
     }
     getAllSegments(){
         return this.allSegments;
@@ -94,6 +95,11 @@ class SegmentData extends EventEmitter{
             new Segment(start, diff),
             this._getTransformToBaseRect(start)
         );
+    }
+    remove(i){
+        this.baseSegments.splice(i, 1);
+        this.generate();
+        this.emit("draw", this);
     }
     edit(i, start, diff){
         this.baseSegments[i] = this._normalizeToBaseRect(start, diff);

@@ -67,6 +67,10 @@ const getIdentity = ()=>{
     return new PIXI.Matrix();
 };
 
+const isIdentity = (m)=>{
+    return (m.b === 0 && m.c === 0 && m.a === 1 && m.d === 1 && m.tx === 0 && m.ty === 0);
+};
+
 const transformSegment = (segment, t)=>{
     const p0 = t.apply(segment.start);
     const p1 = t.apply(Utils.add(segment.start, segment.diff));
@@ -99,6 +103,7 @@ const composeArrays = (arr1, arr2)=>{
 
 const GeomUtils = {
     compose:compose,
+    isIdentity:isIdentity,
     composeAllWith:composeAllWith,
     composeArrays:composeArrays,
     getTranslation:getTranslation,

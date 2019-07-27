@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 
-const SIZE = 4;
+const SIZE = 6;
 
 const getTexture = (clr)=>{
     let canvas = document.createElement("canvas");
@@ -9,8 +9,12 @@ const getTexture = (clr)=>{
     var context = canvas.getContext("2d");
     context.fillStyle = clr;
     context.beginPath();
-    context.arc(SIZE/2, SIZE/2, SIZE/2, 0, 2*Math.PI);
-    context.fillStyle = clr;
+    if(clr === "red"){
+        context.arc(SIZE/2, SIZE/2, SIZE/2, 0, 2*Math.PI);
+    }
+    else{
+        context.rect(0, 0, SIZE, SIZE);
+    }
     context.fill();
     const texture = new PIXI.Texture(new PIXI.BaseTexture(canvas), PIXI.SCALE_MODES.LINEAR);
     texture.frame = new PIXI.Rectangle(0, 0, SIZE, SIZE);
@@ -35,7 +39,7 @@ BlobSprite.prototype.updatePosition = function (p) {
 };
 
 BlobSprite.prototype.updateScale = function(start){
-    this.setTexture(start ? redTexture : greenTexture);
+    this.texture = (start ? redTexture : greenTexture);
 };
 
 export default BlobSprite;
