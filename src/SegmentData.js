@@ -38,17 +38,18 @@ class SegmentData extends EventEmitter{
             const dy = Math.abs(p.y - q.y);
             return dx < 0.01 && dy < 0.01;
         };
+        console.log("#", this.baseSegments.length, this.allSegments.length);
         for(let i = 0; i < this.allSegments.length - 1; i++){
             for(let j = i + 1; j < this.allSegments.length; j++){
                 const p0 = this.allSegments[i].start;
-                const q0 = this.allSegments[j].start;
                 const p1 = this.allSegments[i].end;
+                const q0 = this.allSegments[j].start;
                 const q1 = this.allSegments[j].end;
-                if(c(p0, p1) && c(q0, q1)){
-                    console.log("found", p0, q0, p1, q1);
+                if(c(p0, q0) && c(p1, q1)){
+                    throw new Error("found1", p0, q0, p1, q1);
                 }
-                else if(c(p0, q1) && c(q0, p1)){
-                    console.log("found", p0, q0, p1, q1);
+                else if(c(p0, q1) && c(p1, q0)){
+                    throw new Error("found2", p0, q0, p1, q1);
                 }
             }
         }
