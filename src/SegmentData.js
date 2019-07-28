@@ -13,9 +13,9 @@ class SegmentData extends EventEmitter{
         this.allSegments = [];
         this.hash = new Hash();
         this.bounds = new Rect(
-            Utils.PT(-1,-1),
-            Utils.PT(1026, 0),
-            Utils.PT(0, 602)
+            Utils.PT(0,0),
+            Utils.PT(1024, 0),
+            Utils.PT(0, 600)
         );
         this.updateTransform(transform);
     }
@@ -26,9 +26,10 @@ class SegmentData extends EventEmitter{
         this.allSegments = [];
         this.allTransforms.forEach(t=>{
             //const isIdentity = GeomUtils.isIdentity(t);
-            this.baseSegments.forEach(segment=>{
+            this.baseSegments.forEach((segment, i)=>{
                 const transformedSegment = GeomUtils.transformSegment(segment, t);
                 transformedSegment.setBaseSegment(segment);
+                transformedSegment._index = i;
                 transformedSegment._i = t._i;
                 transformedSegment._j = t._j;
                 //transformedSegment.setIsBaseSegment(isIdentity);
@@ -87,12 +88,10 @@ class SegmentData extends EventEmitter{
         this.baseSegments[i] = this._normalizeToBaseRect(start, diff);
         this.generate();
         this.emit("draw", this);
-        //return this.baseSegments[i];
     }
     add(start, diff){
         const segment = this._normalizeToBaseRect(start, diff);
         this.baseSegments.push(segment);
-        //return segment;
     }
 }
 

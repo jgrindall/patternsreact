@@ -19,32 +19,13 @@ class Hash{
     }
     getClose(p, index){
         let results = this.quadtree.query(new Circle(p.x, p.y, 20));
-        results = _.reject(results, result=>{
-            return Utils.closeTo(result, p, 0.0001);
-        });
         const sameSegment = results.filter(result => {
-            console.log(result);
+            return (result.data.custom.segment._index === index);
         });
-
-        console.log('res', p, results, index);
-        return null;
-        /*
-        const results = quadtree.query(new Circle(150, 150, 100));
-        let close = [];
-        for(let i = 0; i < this.pointHash.length; i++){
-            const entry = this.pointHash[i];
-            const eq = (entry.location.x === p.x && entry.location.y === p.y);
-            const d = Utils.getDistSqr(entry.location, p);
-            if(!eq && d > 0.0000001 && d < 50){
-                close.push({entry:entry, d:d});
-            }
+        if(sameSegment.length >= 1 && sameSegment.length === results.length){
+            return Utils.average(results);
         }
-        if(close.length >= 1){
-            close = _.sortBy(close, obj=>obj.d);
-            return close[0].entry;
-        }
-        return null;
-        */
+        return results.length >= 1 ? results[0] : p;
     }
     add(segment){
         const start = {

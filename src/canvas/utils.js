@@ -1,5 +1,6 @@
 
 import * as PIXI from 'pixi.js';
+import _ from 'lodash';
 
 const PT = function(x, y){
     if(arguments.length === 0){
@@ -11,12 +12,27 @@ const PT = function(x, y){
     return new PIXI.Point(x, y)
 };
 
+const average = (pts) => {
+    const len = pts.length;
+    if(len === 0){
+        throw "no points";
+    }
+    else if(len === 1){
+        return PT(pts[0].x, pts[0].y);
+    }
+    const sum = add(pts);
+    return PT(sum.x/len, sum.y/len);
+};
+
 const add = (...a) => {
     const origin = PT();
-    if(a.length <= 1){
+    if(a.length === 1 && _.isArray(a[0])){
+        return add.apply(null, a[0]);
+    }
+    else if(a.length <= 1){
         throw new Error("add");
     }
-    if(a.length === 2){
+    else if(a.length === 2){
         return _add(a[0], a[1]);
     }
     return a.reduce((previous, current) => {
@@ -85,6 +101,7 @@ const vectorsIntersect = (p, v, q, w)=>{
 
 const Utils = {
     PT:PT,
+    average:average,
     add:add,
     times:times,
     dot:dot,

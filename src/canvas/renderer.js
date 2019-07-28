@@ -75,6 +75,7 @@ const netRenderer = {
 			}
 			container.children[i].visible = (i < targetNum);
 		}
+		return;
 		container = ptsContainer;
 		num = container.children.length;
 		targetNum = hash.pointHash.length;
