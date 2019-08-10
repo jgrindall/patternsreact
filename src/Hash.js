@@ -5,7 +5,7 @@ import Utils from "./canvas/utils";
 
 class Hash{
     constructor(){
-        this.quadtree = new QuadTree(new Box(0, 0, 1024, 600));
+        this.quadtree = new QuadTree(new Box(0, 0, 1000, 480));
     }
     empty(){
         this.pointHash = [];

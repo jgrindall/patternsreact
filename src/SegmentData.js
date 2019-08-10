@@ -2,6 +2,7 @@ import GeomUtils from "./canvas/geom_utils";
 import Segment from "./Segment";
 import Utils from "./canvas/utils";
 import Rect from "./canvas/rect";
+import RectUtils from "./canvas/rectutils";
 import EventEmitter from 'events';
 import Hash from './Hash';
 
@@ -14,8 +15,8 @@ class SegmentData extends EventEmitter{
         this.hash = new Hash();
         this.bounds = new Rect(
             Utils.PT(0,0),
-            Utils.PT(1024, 0),
-            Utils.PT(0, 600)
+            Utils.PT(1000, 0),
+            Utils.PT(0, 480)
         );
         this.updateTransform(transform);
     }
@@ -23,6 +24,14 @@ class SegmentData extends EventEmitter{
         return this.hash.getClose(p, i);
     }
     generateAllSegments(){
+        const segExists = (segs, newSeg)=>{
+            for(let i = 0; i < segs.length; i++){
+                if(segs[i].isCloseTo(newSeg)){
+                    return true;
+                }
+            }
+            return false;
+        };
         this.allSegments = [];
         this.allTransforms.forEach(t=>{
             //const isIdentity = GeomUtils.isIdentity(t);
@@ -33,7 +42,13 @@ class SegmentData extends EventEmitter{
                 transformedSegment._i = t._i;
                 transformedSegment._j = t._j;
                 //transformedSegment.setIsBaseSegment(isIdentity);
-                this.allSegments.push(transformedSegment);
+                if(
+                    RectUtils.rectContainsSegment(this.bounds, transformedSegment)
+                    &&
+                    !segExists(this.allSegments, transformedSegment)
+                ){
+                    this.allSegments.push(transformedSegment);
+                }
             });
         });
     }
@@ -51,10 +66,9 @@ class SegmentData extends EventEmitter{
         this.transform = trans;
         this.invTransform = GeomUtils.getInverse(this.transform);
         this.transformedBaseRect = this.group.baseRect.getTransformed(this.transform);
-        const baseTransforms = GeomUtils.composeAllWith(this.group.baseTransforms, this.transform);
-        const transfomedRect = this.group.baseRect.getTransformed(this.transform);
-        const coverTransforms = transfomedRect.getTransformsForRect(this.bounds);
-        this.allTransforms = GeomUtils.composeArrays(baseTransforms, coverTransforms);
+        this.baseTransforms = GeomUtils.composeAllWith(this.group.baseTransforms, this.transform);
+        this.coverTransforms = this.transformedBaseRect.getTransformsForRect(this.bounds);
+        this.allTransforms = GeomUtils.composeArrays(this.baseTransforms, this.coverTransforms);
         this.generate();
     }
     getNextIndex(){

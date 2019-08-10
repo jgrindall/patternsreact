@@ -104,6 +104,7 @@ const Utils = {
     average:average,
     add:add,
     times:times,
+    closeTo:closeTo,
     dot:dot,
     pToQ:pToQ,
     pMinusQ:pMinusQ,

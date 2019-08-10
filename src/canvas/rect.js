@@ -66,8 +66,8 @@ class Rect{
     getTransformsForRect(r){
         const span = this.getSpanXYForRect(r);
         const transforms = [];
-        for(let lambda = span.lambda.min; lambda <= span.lambda.max; lambda++){
-            for(let mu = span.mu.min; mu <= span.mu.max; mu++){
+        for(let lambda = span.lambda.min - 1; lambda <= span.lambda.max + 1; lambda++){
+            for(let mu = span.mu.min - 1; mu <= span.mu.max + 1; mu++){
                 transforms.push(GeomUtils.getTranslation(lambda*this.v.x + mu*this.w.x, lambda*this.v.y + mu*this.w.y));
             }
         }
@@ -123,11 +123,11 @@ class Rect{
         return {
             lambda:{
                 min:Math.floor(_.min(lambdas)),
-                max:Math.floor(_.max(lambdas))
+                max:Math.ceil(_.max(lambdas))
             },
             mu:{
                 min:Math.floor(_.min(mus)),
-                max:Math.floor(_.max(mus))
+                max:Math.ceil(_.max(mus))
             }
         };
     }

@@ -12,7 +12,7 @@ const gp = groupP3M1;
 
 const trans = GeomUtils.compose(
     GeomUtils.getTranslation(0, 0),
-    GeomUtils.getScale(1.01),
+    GeomUtils.getScale(1),
     GeomUtils.getRotationAboutOrigin(0)
 );
 
@@ -50,10 +50,12 @@ class MyComponent extends Component {
 
   componentDidMount(){
     renderer.init(this.canvasRef.current);
+    this.draw();
   }
 
   draw(){
-    renderer.update(this.list.getAllSegments(), this.list.hash, this.props.tool);
+    renderer.update(this.list.getAllSegments(), this.list.hash, this.list.transformedBaseRect, this.list.coverTransforms, this.props.tool);
+    this.forceUpdate();
   }
 
   _onMouseDown(e){
@@ -76,14 +78,21 @@ class MyComponent extends Component {
   }
 
   render() {
+      const num0 = this.list.baseTransforms.length;
+      const num1 = this.list.coverTransforms.length;
+      const num2 = this.list.baseSegments.length;
+      const num3 = this.list.allSegments.length;
 
+      const s = 'base: ' + num0 + '\ncover: ' + num1 + '\nbase: ' + num2 + '\nall: ' + num3;
       return(
             <div className='drawing'
                 onMouseDown={this._onMouseDown.bind(this)}
                 onMouseMove={this._onMouseMove.bind(this)}
                 onMouseUp={this._onMouseUp.bind(this)}>
 
-                    <canvas ref={this.canvasRef} width='1024' height='600' ></canvas>
+                    <canvas ref={this.canvasRef} width='1000' height='480' ></canvas>
+
+                    <textarea value = {s}></textarea>
 
             </div>
         )

@@ -1,12 +1,21 @@
+import Utils from "./utils"
+
 const RectUtils = {
-    rectContainsPoint:(p, q)=>{
-        const mult = p.getMultipliers(q);
+    rectContainsPoint:(rect, q)=>{
+        const mult = rect.getMultipliers(q);
         return mult.lambda >= 0 && mult.mu >= 0 && mult.lambda <= 1 && mult.mu <= 1;
+    },
+    rectContainsSegment:(rect, seg)=>{
+        return (
+            RectUtils.rectContainsPoint(rect, seg.start)
+            ||
+            RectUtils.rectContainsPoint(rect, seg.end)
+        );
     },
     // a completely inside b
     rectAIsWithinRectB:(a, b)=>{
         const pts = a.getAll();
-        for(i = 0; i < pts.length; i++){
+        for(let i = 0; i < pts.length; i++){
             if(!RectUtils.rectContainsPoint(b, pts[i])){
                 return false;
             }
@@ -14,10 +23,10 @@ const RectUtils = {
         return true;
     },
     lineIntersectsRect:(p, v, rect)=>{
-        return vectorsIntersect(p, v, rect.get('p'), rect.v) ||
-        vectorsIntersect(p, v, rect.get('p'), rect.w) ||
-        vectorsIntersect(p, v, rect.get('v'), rect.w) ||
-        vectorsIntersect(p, v, rect.get('w'), rect.v);
+        return Utils.vectorsIntersect(p, v, rect.get('p'), rect.v) ||
+        Utils.vectorsIntersect(p, v, rect.get('p'), rect.w) ||
+        Utils.vectorsIntersect(p, v, rect.get('v'), rect.w) ||
+        Utils.vectorsIntersect(p, v, rect.get('w'), rect.v);
     },
     rectOverlapsRect:(rectA, rectB)=>{
         return RectUtils.rectAIsWithinRectB(rectA, rectB) ||

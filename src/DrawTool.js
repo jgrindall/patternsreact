@@ -10,8 +10,7 @@ class DrawTool{
         this.p0 = Utils.PT(e.pageX, e.pageY);
         this.state = "drawing";
         this.index = this.comp.list.getNextIndex();
-        const close = this.comp.list.getClose(this.p0);
-        this.p0 = close || this.p0;
+        this.p0 = this.comp.list.getClose(this.p0);
         this.comp.list.add(this.p0, Utils.PT(0, 0));
     }
     _edit(p1){
@@ -30,8 +29,7 @@ class DrawTool{
         if(this.state === "drawing"){
             this.state = "idle";
             let p1 = Utils.PT(e.pageX, e.pageY);
-            const close = this.comp.list.getClose(p1, this.index);
-            p1 = close || p1;
+            p1 = this.comp.list.getClose(p1, this.index)
             if(Utils.getDistSqr(this.p0, p1) >= MIN_LENGTH){
                 this._edit(p1);
             }

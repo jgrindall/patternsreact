@@ -14,7 +14,6 @@ class TransformTool{
         if(this.transforming){
             const p = Utils.PT(e.pageX, e.pageY);
             const scale = Math.sqrt(Math.abs(GeomUtils.getDet(this.comp.trans)));
-            console.log(scale);
             const t = GeomUtils.getTranslation((p.x - this.p.x)/scale, (p.y - this.p.y)/scale);
             this.p = p;
             const newTrans = GeomUtils.compose(t, this.comp.trans);

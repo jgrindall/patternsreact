@@ -2,9 +2,9 @@ import GeomUtils from './geom_utils';
 import Utils from './utils';
 import Rect from './rect';
 import * as PIXI from 'pixi.js';
+const sideLen = 160;
 
 const rt3 = Math.sqrt(3);
-const sideLen = 120;
 const dy = Utils.PT(0, sideLen);
 
 const p = Utils.PT(sideLen*rt3/2, sideLen/2);
@@ -28,12 +28,14 @@ const groupP3M1 = {
         p,
         Utils.PT(0, sideLen)
     ]),
-    getBaseTransform:function(p){
-        if(p.x < 0 || p.y < 0 || p.x > sideLen*rt3 || p.y > 300){
+    getBaseTransform:function(pos){
+        if(pos.x < 0 || pos.y < 0 || pos.x > sideLen*rt3 || pos.y > 3*sideLen){
             throw new Error("outside");
         }
+        // indeterminate cases
         for(let i = 0; i < this.transformedPolys.length; i++){
-            if(this.transformedPolys[i].contains(p.x, p.y)){
+            if(this.transformedPolys[i].contains(pos.x, pos.y)){
+                //if(i === 0 )
                 return this.baseTransforms[i];
             }
         }

@@ -12,6 +12,7 @@ let realContainer;
 let drawingContainer;
 
 const _clean = segs=>{
+	//console.log(segs);
 	return segs;
 };
 
@@ -55,8 +56,21 @@ const netRenderer = {
 		drawingGfx.clear().lineStyle(2, 0xff0000)
        .moveTo(p0.x, p0.y)
        .lineTo(p1.x, p1.y);
-   },
-	update:(segs, hash, tool)=>{
+   	},
+	drawRects:(rect, ct)=>{
+		drawingGfx.clear().lineStyle(2, 0xff0000);
+		ct.forEach(t=>{
+			netRenderer.drawRect(rect.getTransformed(t));
+		});
+	},
+   	drawRect:(rect)=>{
+	   	drawingGfx.moveTo(rect.p.x, rect.p.y)
+	  	.lineTo(rect.p.x + rect.v.x, rect.p.y + rect.v.y)
+		.lineTo(rect.p.x + rect.v.x + rect.w.x, rect.p.y + rect.v.y + rect.w.y)
+		.lineTo(rect.p.x + rect.w.x, rect.p.y + rect.w.y)
+		.lineTo(rect.p.x, rect.p.y);
+    },
+	update:(segs, hash, rect, ct, tool)=>{
 		segs = _clean(segs);
 		let i;
 		let container = constructionContainer;
@@ -64,6 +78,7 @@ const netRenderer = {
 		color = color || "red";
 		let num = container.children.length;
 		let targetNum = segs.length;
+		netRenderer.drawRects(rect, ct);
 		while(num < targetNum){
 			container.addChild(new LineSprite(color));
 			num++;
@@ -75,7 +90,7 @@ const netRenderer = {
 			}
 			container.children[i].visible = (i < targetNum);
 		}
-		return;
+		//return;
 		container = ptsContainer;
 		num = container.children.length;
 		targetNum = hash.pointHash.length;
