@@ -23,14 +23,6 @@ class Segment{
             (Utils.closeTo(s0, e1, 10) && Utils.closeTo(e0, s1, 10))
         );
     }
-    /*
-    setIsBaseSegment(isBase){
-        this.isBase = isBase;
-    }
-    getIsBaseSegment(){
-        return this.isBase;
-    }
-    */
 }
 
 export default Segment;

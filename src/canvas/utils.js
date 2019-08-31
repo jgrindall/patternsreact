@@ -15,7 +15,7 @@ const PT = function(x, y){
 const average = (pts) => {
     const len = pts.length;
     if(len === 0){
-        throw "no points";
+        throw new Error("no points");
     }
     else if(len === 1){
         return PT(pts[0].x, pts[0].y);
@@ -109,7 +109,6 @@ const Utils = {
     pToQ:pToQ,
     pMinusQ:pMinusQ,
     perp:perp,
-    closeTo:closeTo,
     getDistSqr:getDistSqr,
     modSqr:modSqr,
     getMultipliersForBasis:getMultipliersForBasis,

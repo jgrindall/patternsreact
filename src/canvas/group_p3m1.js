@@ -1,6 +1,6 @@
 import GeomUtils from './geom_utils';
 import Utils from './utils';
-import Rect from './rect';
+import Rect from './Rect';
 import * as PIXI from 'pixi.js';
 const sideLen = 160;
 

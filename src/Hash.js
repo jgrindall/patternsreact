@@ -1,11 +1,13 @@
 
 import {QuadTree, Box, Point, Circle} from 'js-quadtree';
-import _ from "lodash";
 import Utils from "./canvas/utils";
 
 class Hash{
     constructor(){
         this.quadtree = new QuadTree(new Box(0, 0, 1000, 480));
+    }
+    getPoints(){
+        return this.pointHash;
     }
     empty(){
         this.pointHash = [];

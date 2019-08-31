@@ -23,4 +23,5 @@ textarea{
     width:200px;
     height:500px;
     background: pink;
+    opacity: 0.75;
 }
